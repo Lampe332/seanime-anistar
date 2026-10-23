@@ -1,0 +1,14 @@
+{
+  "id": "anistar",
+  "name": "AniStar (RU)",
+  "version": "1.3.0",
+  "manifestURI": "https://raw.githubusercontent.com/Lampe332/seanime-anistar/main/manifest.json",
+  "language": "typescript",
+  "type": "onlinestream-provider",
+  "description": "Russian dubbed anime from anistar.org (HLS + MP4, 360p/720p).",
+  "author": "Lampe332",
+  "icon": "https://raw.githubusercontent.com/Lampe332/seanime-anistar/main/icon.png",
+  "website": "https://github.com/Lampe332/seanime-anistar",
+  "lang": "ru",
+  "payloadURI": "https://raw.githubusercontent.com/Lampe332/seanime-anistar/main/provider.ts"
+}
