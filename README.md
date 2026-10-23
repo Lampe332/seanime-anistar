@@ -1,36 +1,68 @@
-<img src="icon.png" width="72" align="right" alt="AniStar logo">
+<div align="center">
+
+<img src="icon.png" width="96" alt="AniStar logo">
 
 # AniStar for Seanime
 
-Online-streaming provider for [Seanime](https://github.com/5rahim/seanime) that plays anime from [anistar.org](https://anistar.org) with **Russian voice-over**.
+Watch anime from [anistar.org](https://anistar.org) inside [Seanime](https://github.com/5rahim/seanime), with Russian voice-over.
+
+![type](https://img.shields.io/badge/Seanime-online%20streaming%20provider-6d28d9)
+![version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FLampe332%2Fseanime-anistar%2Fmain%2Fmanifest.json&query=%24.version&label=version&color=6d28d9)
+![audio](https://img.shields.io/badge/audio-Russian%20dub-555)
+![quality](https://img.shields.io/badge/quality-720p%20%7C%20360p-555)
+
+</div>
 
 ## Install
 
-1. Open Seanime → **Extensions** → **Add extension**.
-2. Paste this URL and confirm:
+In Seanime go to **Extensions** → **Add extension**, paste this URL and confirm:
 
-   ```
-   https://raw.githubusercontent.com/Lampe332/seanime-anistar/main/manifest.json
-   ```
+```
+https://raw.githubusercontent.com/Lampe332/seanime-anistar/main/manifest.json
+```
 
-3. On an anime page open **Online streaming** and pick **AniStar (RU)** as provider.
+Open any anime, switch to **Online streaming** and pick **AniStar (RU)** from the provider dropdown. Updates come through the same URL, so later on a click on **Check for updates** is enough.
 
-Seanime checks the same URL for updates.
+## Servers
 
-## What it does
+| Server | Format | Qualities |
+|---|---|---|
+| AniStar HLS (default) | m3u8 | 720p, 360p |
+| AniStar MP4 | mp4 | 720p, 360p |
 
-- Searches anistar.org with the AniList titles and picks the right entry: seasons, parts, movies, OVAs and the release year are checked, so sequels don't get mixed up.
-- Split cours that the site keeps in one entry are mapped correctly, e.g. *SPY×FAMILY Part 2* plays episodes 13–25 of the site's *Spy x Family* entry.
-- Two servers: **AniStar HLS** (720p/360p, default) and **AniStar MP4** (720p/360p).
-- When an episode exists twice (main dub and multi-voice dub), the main dub is used.
+MP4 is the fallback if HLS gives you trouble. Both run through Seanime's proxy because the site's CDN answers 403 to anything without an anistar.org referer.
 
-## Limitations
+## How it finds the right show
 
-- Only Russian dub, no subtitles. The site burns an ad watermark into the video.
-- Very old entries on the site only have dead Flash players, so they show no episodes.
-- Titles spelled differently on the site than on AniList, or with a different season count, are not found. Use **Manual match** in Seanime for those.
-- AniList is asked once per anime for synonyms and prequels (rate limit ~30 requests/min). If it is unavailable, split cours are not detected for that moment.
+AniStar files every show under one Russian title plus a few romaji and English aliases. Its search also returns news posts, manga pages, openings and AMVs right next to the actual anime. The extension drops all of that, then checks what's left against AniList: release year, TV or movie, season number, and "Part 2" style splits. When the numbers don't line up you get "not found", not the wrong season.
+
+Sometimes AniList splits a show that the site keeps in a single entry. Those get mapped onto the right episodes:
+
+| AniList entry | Plays from the site entry |
+|---|---|
+| SPY×FAMILY Part 2 | *Spy x Family*, episodes 13 to 25 |
+| SAKAMOTO DAYS Part 2 | *Sakamoto Days*, episodes 12 to 22 |
+| Demon Slayer: Entertainment District Arc | *Kimetsu no Yaiba 2nd Season*, episodes 8 to 18 |
+
+For that, the extension asks AniList once per anime for synonyms and prequels. Seanime only hands over synonyms that contain the word "season", and that misses names like "KnY 3".
+
+A lot of episodes exist twice on the site: the main dub and a multi-voice dub. The main dub wins.
+
+## Tested
+
+Both runs went through Seanime's own extension playground.
+
+- 101 AniList titles, from Naruto and One Piece to shows airing this season, including about 30 sequels and split cours. No wrong matches.
+- 44 random playable entries pulled from across the whole site catalogue. 41 found, 3 missed, none matched to the wrong show.
+
+## Known gaps
+
+- Russian dub only, no subtitles. The site burns a 1XBET watermark into its videos, and there's nothing an extension can do about that.
+- About the older third of the catalogue still points at dead Flash players (myvi, kiwi, sibnet). Those shows get found but have no episodes.
+- Different spelling or season numbering on the site means "not found". Two cases from testing: AniList says *GIRS Crisis* where the site says *Gears Crisis*, and AniList's first season of *Jing: Shuang Cheng* is the site's "2nd Season". **Manual match** in Seanime sorts these out by hand.
+- AniList allows roughly 30 requests a minute. If it rate-limits at the wrong moment, split cours go undetected until the next search.
+- If AniStar changes its player page or CDN, this breaks. Please open an issue.
 
 ## Notes
 
-The extension only reads public pages of anistar.org and hosts no video. The site is behind Cloudflare; Seanime's built-in fetch gets through, plain scripts usually don't.
+The extension only reads public pages on anistar.org and hosts no video. The site sits behind Cloudflare: Seanime's fetch gets through, plain scripts usually get a 403.
